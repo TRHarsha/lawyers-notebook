@@ -9,9 +9,22 @@ notes_file = 'lawyer_notes.csv'
 # Function to load cases from the CSV file
 def load_cases():
     if os.path.exists(cases_file):
-        return pd.read_csv(cases_file)
+        try:
+            df = pd.read_csv(cases_file)
+            if df.empty:
+                st.warning("The cases file is empty.")
+                return pd.DataFrame(columns=['Case ID', 'Client Name', 'Case Description', 'Status'])
+            return df
+        except pd.errors.EmptyDataError:
+            st.warning("The cases file is empty.")
+            return pd.DataFrame(columns=['Case ID', 'Client Name', 'Case Description', 'Status'])
+        except Exception as e:
+            st.error(f"An error occurred while loading cases: {e}")
+            return pd.DataFrame(columns=['Case ID', 'Client Name', 'Case Description', 'Status'])
     else:
-        return pd.DataFrame(columns=['Case ID', 'Client Name', 'Case Description', 'Deadline'])
+        st.warning("Cases file does not exist. Creating a new one.")
+        return pd.DataFrame(columns=['Case ID', 'Client Name', 'Case Description', 'Status'])
+
 
 # Function to save a case to the CSV file
 def save_case(case_id, client_name, case_desc, deadline):
