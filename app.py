@@ -29,7 +29,7 @@ def save_data(file_path, data):
     df.to_csv(file_path, index=False)
 
 # Streamlit application
-st.title("Lawyer Notepad")
+st.title("Lawyer Notebook")
 
 # Case Management Section
 st.header("Case Management")
