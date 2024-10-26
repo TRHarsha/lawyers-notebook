@@ -1,29 +1,24 @@
-import streamlit as st
-import pandas as pd
 import os
+import pandas as pd
+import streamlit as st
 
-# Define file paths for cases and notes
-cases_file = 'lawyer_cases.csv'
-notes_file = 'lawyer_notes.csv'
-
-# Function to load cases from the CSV file
-def load_cases():
-    if os.path.exists(cases_file):
+def load_notes():
+    if os.path.exists(notes_file):
         try:
-            df = pd.read_csv(cases_file)
+            df = pd.read_csv(notes_file)
             if df.empty:
-                st.warning("The cases file is empty.")
-                return pd.DataFrame(columns=['Case ID', 'Client Name', 'Case Description', 'Status'])
+                st.warning("The notes file is empty.")
+                return pd.DataFrame(columns=['Note ID', 'Case ID', 'Content', 'Date'])
             return df
         except pd.errors.EmptyDataError:
-            st.warning("The cases file is empty.")
-            return pd.DataFrame(columns=['Case ID', 'Client Name', 'Case Description', 'Status'])
+            st.warning("The notes file is empty.")
+            return pd.DataFrame(columns=['Note ID', 'Case ID', 'Content', 'Date'])
         except Exception as e:
-            st.error(f"An error occurred while loading cases: {e}")
-            return pd.DataFrame(columns=['Case ID', 'Client Name', 'Case Description', 'Status'])
+            st.error(f"An error occurred while loading notes: {e}")
+            return pd.DataFrame(columns=['Note ID', 'Case ID', 'Content', 'Date'])
     else:
-        st.warning("Cases file does not exist. Creating a new one.")
-        return pd.DataFrame(columns=['Case ID', 'Client Name', 'Case Description', 'Status'])
+        st.warning("Notes file does not exist. Creating a new one.")
+        return pd.DataFrame(columns=['Note ID', 'Case ID', 'Content', 'Date'])
 
 
 # Function to save a case to the CSV file
