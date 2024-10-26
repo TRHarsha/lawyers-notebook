@@ -9,9 +9,18 @@ notes_file = 'lawyer_notes.csv'
 # Function to load data from CSV files
 def load_data(file_path, columns):
     if os.path.exists(file_path):
+        # Check if the file is empty
+        if os.path.getsize(file_path) == 0:
+            # Create an empty DataFrame with the correct columns and save it
+            df = pd.DataFrame(columns=columns)
+            df.to_csv(file_path, index=False)
+            return df
         return pd.read_csv(file_path)
     else:
-        return pd.DataFrame(columns=columns)
+        # Create a new DataFrame with the correct columns and save it
+        df = pd.DataFrame(columns=columns)
+        df.to_csv(file_path, index=False)
+        return df
 
 # Function to save data to CSV files
 def save_data(file_path, data):
