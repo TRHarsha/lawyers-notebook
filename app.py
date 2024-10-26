@@ -9,15 +9,18 @@ notes_file = 'lawyer_notes.csv'
 # Function to load data from CSV files
 def load_data(file_path, columns):
     if os.path.exists(file_path):
-        # Check if the file is empty
-        if os.path.getsize(file_path) == 0:
-            # Create an empty DataFrame with the correct columns and save it
-            df = pd.DataFrame(columns=columns)
-            df.to_csv(file_path, index=False)
-            return df
-        return pd.read_csv(file_path)
+        try:
+            # Check if the file is empty
+            if os.path.getsize(file_path) == 0:
+                df = pd.DataFrame(columns=columns)
+                df.to_csv(file_path, index=False)
+                return df
+            return pd.read_csv(file_path, encoding="utf-8", usecols=columns)
+        except pd.errors.EmptyDataError:
+            # Return an empty DataFrame if there's an error reading data
+            return pd.DataFrame(columns=columns)
     else:
-        # Create a new DataFrame with the correct columns and save it
+        # Create and save a new DataFrame if the file does not exist
         df = pd.DataFrame(columns=columns)
         df.to_csv(file_path, index=False)
         return df
@@ -50,6 +53,7 @@ with st.form(key='case_form'):
             })
             save_data(cases_file, new_case)
             st.success("Case added successfully!")
+            st.experimental_rerun()  # Clear form after submission
         else:
             st.warning("Please fill all fields.")
 
@@ -68,10 +72,11 @@ if st.button("Save Note"):
     if note_input:
         new_note = pd.DataFrame({
             'Note': [note_input],
-            'Timestamp': [pd.Timestamp.now()]
+            'Timestamp': [pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")]
         })
         save_data(notes_file, new_note)
         st.success("Note saved successfully!")
+        st.experimental_rerun()  # Clear note input after submission
     else:
         st.warning("Please enter a note.")
 
